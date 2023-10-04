@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Sep 21 23:18:30 2023
+Spyder Editor
 
-@author: trevor
+This is a temporary script file.
 """
-
 
 import requests
 import json
@@ -16,11 +14,6 @@ from requests.auth import HTTPBasicAuth
 import numpy as np
 import pandas as pd 
 from datetime import date, datetime, timedelta as td
-
-
-#######################
-#### aTimeLogger #####
-######################
 # Modified from https://github.com/YujiShen/TimeReport/blob/master/time_api.py
 
 
@@ -49,7 +42,9 @@ def get_intervals(auth_header, start_date, end_date, timezone):
     start_datetime = arrow.get(pd.to_datetime(start_date), timezone)
     end_datetime = arrow.get(pd.to_datetime(end_date), timezone)
     
-    r_interval = requests.get("https://app.atimelogger.com/api/v2/intervals", auth=auth_header)
+    r_interval = requests.get("https://app.atimelogger.com/api/v2/intervals",
+                              params={'from': str(start_datetime.timestamp), 'to': str(end_datetime.timestamp)},
+                              auth=auth_header)
     intervals = json.loads(r_interval.text)
     edf = pd.DataFrame.from_dict(intervals['intervals'])
 
@@ -70,7 +65,7 @@ def get_all_intervals(auth_header, INTERVAL_MAX):
     """
 
     r_interval = requests.get("https://app.atimelogger.com/api/v2/intervals",
-                              params={'limit': INTERVAL_MAX, 'order': 'desc'},
+                              params={'limit': INTERVAL_MAX, 'order': 'asc'},
                               auth=auth_header)
     intervals = json.loads(r_interval.text)
     edf = pd.DataFrame.from_dict(intervals['intervals'])
